@@ -15,13 +15,15 @@ class Mapper:
         self.latitude = list(table['latitude'])
         self.longitude = list(table['longitude'])
 
-    def categorize_accel(self):
-        self.max_cate_accel = int(max(self.accel) / 0.5)
-        self.cate_accel = [int(x / 0.5) for x in self.accel]
+    def categorize_accel(self, unit=0.5):
+        self.accel_unit = unit
+        self.max_cate_accel = int(max(self.accel) / unit)
+        self.cate_accel = [int(x / unit) for x in self.accel]
 
-    def categorize_heart(self):
-        self.max_cate_heart = int(max(self.heart_rate) / 30)
-        self.cate_heart = [int(x / 30) for x in self.heart_rate]
+    def categorize_heart(self, unit=20):
+        self.heart_unit = unit
+        self.max_cate_heart = int((max(self.heart_rate) - 40) / unit)
+        self.cate_heart = [int((x - 40) / unit) for x in self.heart_rate]
 
     def plot_accel(self):
         colors = ['g', 'gold', 'm', 'red', 'k']
@@ -31,18 +33,19 @@ class Mapper:
             y = []
             for idx in range(len(self.accel)):
                 if cate == self.cate_accel[idx]:
-                    x.append(self.latitude[idx])
-                    y.append(self.longitude[idx])
-            ax.scatter(x, y, c=colors[cate], marker='x', label='Category {}, {} - {}'.format(cate, 0.5 * cate,
-                                                                                             0.5 * cate + 0.5))
-        xmin = min(self.latitude) - 0.00001
-        xmax = max(self.latitude) + 0.00001
-        ymin = min(self.longitude) - 0.00001
-        ymax = max(self.longitude) + 0.00001
+                    x.append(self.longitude[idx])
+                    y.append(self.latitude[idx])
+            ax.scatter(x, y, c=colors[cate], marker='x', label='Category {}, {} - {}'.format(cate, self.accel_unit *
+                                                                                             cate, self.accel_unit *
+                                                                                             cate + self.accel_unit))
+        ymin = min(self.latitude) - 0.00001
+        ymax = max(self.latitude) + 0.00001
+        xmin = min(self.longitude) - 0.00001
+        xmax = max(self.longitude) + 0.00001
         plt.xlim(xmin, xmax)
         plt.ylim(ymin, ymax)
-        plt.xlabel("Latitude")
-        plt.ylabel("Logitude")
+        plt.ylabel("Latitude")
+        plt.xlabel("Logitude")
         # plt.xlim(33.21519, 33.21628)
         # plt.ylim(-87.54485, -87.54379)
         plt.grid()
@@ -51,25 +54,27 @@ class Mapper:
         plt.show()
 
     def plot_heart(self):
-        colors = ['g', 'gold', 'm', 'red', 'k']
+        colors = ['g', 'gold', 'm', 'indigo', 'r', 'brown', 'k']
         ax = plt.axes()
         for cate in range(self.max_cate_heart + 1):
             x = []
             y = []
             for idx in range(len(self.heart_rate)):
                 if cate == self.cate_heart[idx]:
-                    x.append(self.latitude[idx])
-                    y.append(self.longitude[idx])
-            ax.scatter(x, y, c=colors[cate], marker='x', label='Category {}, {} - {}'.format(cate, 30 * cate,
-                                                                                             30 * cate + 30))
-        xmin = min(self.latitude) - 0.00001
-        xmax = max(self.latitude) + 0.00001
-        ymin = min(self.longitude) - 0.00001
-        ymax = max(self.longitude) + 0.00001
+                    x.append(self.longitude[idx])
+                    y.append(self.latitude[idx])
+            ax.scatter(x, y, c=colors[cate], marker='x', label='Category {}, {} - {}'.format(cate, 40 + self.heart_unit
+                                                                                             * cate, 40 +
+                                                                                             self.heart_unit * cate +
+                                                                                             self.heart_unit))
+        ymin = min(self.latitude) - 0.00001
+        ymax = max(self.latitude) + 0.00001
+        xmin = min(self.longitude) - 0.00001
+        xmax = max(self.longitude) + 0.00001
         plt.xlim(xmin, xmax)
         plt.ylim(ymin, ymax)
-        plt.xlabel("Latitude")
-        plt.ylabel("Logitude")
+        plt.ylabel("Latitude")
+        plt.xlabel("Logitude")
         # plt.xlim(33.21519, 33.21628)
         # plt.ylim(-87.54485, -87.54379)
         plt.grid()
